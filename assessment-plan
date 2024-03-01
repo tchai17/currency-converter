@@ -1,0 +1,23 @@
+
+
+currency converter
+
+1. read fx_rates json into map< string code, double rate >
+	a. "code" and "rate", ignore rest
+	
+2. read users.json into list of users
+	a. - name String
+	b. - wallet Map < String code, double amount >
+
+3. read transactions.txt into string
+	a. split transactions up with new line char
+	b. decode transactions by split into name / from-curr / to-curr / amount in from
+	c. remove transactions if they do not meet conditions:
+		c1. if from-curr and to-curr is equal, delete transaction from list
+		c2. if user wallet amount < trans amount, delete transaction from list
+		c3. if user is not in users map, delete transaction from list
+		c4. if from-curr OR to-curr is invalid, delete transaction from list
+	d. log all transactions that are deleted, and log transactions that are executed
+
+4. execution of transactions
+	a. if to-curr does not exist, create curr in wallet
