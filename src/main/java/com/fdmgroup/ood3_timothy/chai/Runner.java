@@ -14,11 +14,10 @@ public class Runner {
 	public Logger mainLogger = LogManager.getLogger(Runner.class);
 	
 	public static void main(String[] args) {
-		String filePath = getFilePath("fx_rates.json");
-		
+				
 		TransactionsProcessor transactionsProcessor = new TransactionsProcessor();
 		try {
-			FXRatesList.initializeFXratesToListFromFile(filePath);
+			FXRates.initializeFXratesToMapFromFile();
 			
 			for ( String transaction : transactionsProcessor.getListOfTransactionsToExecute() ) {
 				transactionsProcessor.executeTransaction(transaction);
