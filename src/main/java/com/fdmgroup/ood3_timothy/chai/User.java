@@ -1,6 +1,5 @@
 package com.fdmgroup.ood3_timothy.chai;
 
-
 import java.util.TreeMap;
 
 class User {
