@@ -2,6 +2,11 @@ package com.fdmgroup.ood3_timothy.chai;
 
 import java.util.TreeMap;
 
+/** The User class is designed as a format for Jackson deserialization. 
+ * @param name String which sets the name of the User object
+ * @param wallet TreeMap which stores currency and amount
+ * 
+ */
 class User {
 	private String name;
 	private TreeMap<String, Double> wallet;
@@ -14,10 +19,10 @@ class User {
 	}
 
 	/**
-	 * Custom constructor
+	 * Custom constructor for instantiation of the User class
 	 * 
 	 * @param name   User's name
-	 * @param wallet
+	 * @param wallet TreeMap which stores the currency and the amount of said currency
 	 */
 	public User(String name, TreeMap<String, Double> wallet) {
 		this.name = name;
