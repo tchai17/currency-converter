@@ -8,11 +8,8 @@ class Converter {
 			toCurrencyRate = 1;
 		}
 		else {
-			for ( Currency currency : FXRatesList.currencyRateList ) {
-				if ( currency.getCode().equalsIgnoreCase(toCurrency) ) {
-					toCurrencyRate = currency.getRate();
-				}
-			}
+			toCurrencyRate = FXRates.fxRates.get(toCurrency);
+			
 		}
 		
 		double actualCurrencyRate = fromCurrencyRate / toCurrencyRate;

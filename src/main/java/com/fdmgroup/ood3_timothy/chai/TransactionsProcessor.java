@@ -25,7 +25,7 @@ class TransactionsProcessor {
 	List<String> transactionsListToExecute;
 	List<User> userList;
 	ObjectMapper mapper = new ObjectMapper();
-	Logger transactionsLogger = LogManager.getLogger( TransactionsProcessor.class );
+	Logger transactionsLogger = LogManager.getLogger(TransactionsProcessor.class);
 
 	public TransactionsProcessor() {
 		transactionsListToExecute = new ArrayList<>();
@@ -34,7 +34,7 @@ class TransactionsProcessor {
 			readUsersFile();
 		} catch (FileNotFoundException fe) {
 			transactionsLogger.warn(fe.getMessage());
-			
+
 		} catch (IOException e) {
 			transactionsLogger.warn(e.getMessage());
 		}
@@ -42,89 +42,85 @@ class TransactionsProcessor {
 
 	public void executeTransaction(String transaction) {
 		String[] transactionDetails = transaction.split(" ");
-		String username = transactionDetails[0];		
+		String username = transactionDetails[0];
 		String fromCurrency = transactionDetails[1];
 		String toCurrency = transactionDetails[2];
 		double amount = Double.parseDouble(transactionDetails[3]);
-		
+
 		boolean validTransaction = false;
 		boolean nameMatches = false;
-		
-		
-		
+
 		User targetUser = new User();
 		Set<String> currencies = FXRates.fxRates.keySet();
 		Set<String> validCurrencies = new HashSet<>(currencies);
 		validCurrencies.add("usd");
-		
+
 		// 0 - name, 1 - from-curr, 2- to-curr, 3- amount in from-curr
-		
-		if ( !validCurrencies.contains(fromCurrency) || !validCurrencies.contains(toCurrency) ) {
+
+		if (!validCurrencies.contains(fromCurrency) || !validCurrencies.contains(toCurrency)) {
 			transactionsLogger.info("Invalid currency: transaction skipped : " + transaction);
-	
+
 			validTransaction = false;
 		}
-		
-		if ( fromCurrency.equals(toCurrency) ) {
+
+		if (fromCurrency.equals(toCurrency)) {
 			transactionsLogger.info("FROM-currency equals to TO-currency: transaction skipped : " + transaction);
 			validTransaction = false;
 		}
-		
-		for ( User user : userList ) {
-			
-			if ( username.equalsIgnoreCase(user.getName())) {
+
+		for (User user : userList) {
+
+			if (username.equalsIgnoreCase(user.getName())) {
 				nameMatches = true;
 				targetUser = user;
 				validTransaction = true;
-				if ( !user.getWallet().containsKey(fromCurrency) ) {
-					transactionsLogger.info("User does not hold FROM-currency in wallet: transaction skipped : " + transaction);
+				if (!user.getWallet().containsKey(fromCurrency)) {
+					transactionsLogger
+							.info("User does not hold FROM-currency in wallet: transaction skipped : " + transaction);
 					validTransaction = false;
-				} 
-				else {
-					if ( user.getWallet().get(fromCurrency) < amount ) {
-						transactionsLogger.info("User has insufficient FROM-currency in wallet: transaction skipped : " + transaction);
+				} else {
+					if (user.getWallet().get(fromCurrency) < amount) {
+						transactionsLogger.info(
+								"User has insufficient FROM-currency in wallet: transaction skipped : " + transaction);
 						validTransaction = false;
 					}
 				}
-				
+
 				break;
-			} 
+			}
 		}
-		if ( validTransaction ) {
+		if (validTransaction) {
 			TreeMap<String, Double> targetWallet = targetUser.getWallet();
 			double fromCurrencyRate = targetWallet.get(fromCurrency);
-			
+
 			// actual rate is amount of From-curr per To-curr
 			double actualRate = Converter.convert(fromCurrency, toCurrency, fromCurrencyRate);
 			double amountInToCurr = amount / actualRate;
-			
-			if ( !targetWallet.containsKey(toCurrency) ) {
+
+			if (!targetWallet.containsKey(toCurrency)) {
 				targetWallet.put(toCurrency, 0.0);
-			}
-			else 
-			{
-				targetWallet.replace(fromCurrency, targetWallet.get(fromCurrency) - amount );
+			} else {
+				targetWallet.replace(fromCurrency, targetWallet.get(fromCurrency) - amount);
 				targetWallet.replace(toCurrency, targetWallet.get(toCurrency) + amountInToCurr);
 			}
-			
+
 			updateUsersFile();
 			transactionsLogger.trace("Transaction completed: " + transaction);
-		}
-		else if ( !nameMatches ) {
+		} else if (!nameMatches) {
 			transactionsLogger.info("User does not exist in users.json: transaction skipped : " + transaction);
 		}
-		
+
 	}
 
 	public void updateUsersFile() {
 		FileOutputStream fileOut;
-		File usersFile = new File(Runner.getFilePath("users-test.json"));
-		
+		File usersFile = new File(Runner.getFilePath("users.json"));
+
 		try {
 			fileOut = new FileOutputStream(usersFile);
 			String jsonString = mapper.writeValueAsString(userList);
 			fileOut.write(jsonString.getBytes());
-			
+
 		} catch (JsonProcessingException e) {
 			System.out.println(e.getMessage());
 		} catch (FileNotFoundException e) {
@@ -132,12 +128,13 @@ class TransactionsProcessor {
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 	}
 
 	private void readUsersFile() throws StreamReadException, DatabindException, IOException {
 
-		TypeReference<List<User>> userListType = new TypeReference<List<User>>() {};
+		TypeReference<List<User>> userListType = new TypeReference<List<User>>() {
+		};
 		File usersFile = new File(Runner.getFilePath("users.json"));
 		this.userList = mapper.readValue(usersFile, userListType);
 	}
@@ -161,6 +158,5 @@ class TransactionsProcessor {
 	public List<String> getListOfTransactionsToExecute() {
 		return this.transactionsListToExecute;
 	}
-	
 
 }
