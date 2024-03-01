@@ -14,23 +14,13 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FXRatesList {
-	private List<Currency> currencyRateList;
-	Logger fxLogger = LogManager.getLogger( FXRatesList.class );
-	
-	public FXRatesList() {
-		this.currencyRateList = new ArrayList<>();
-		
-	}
+	static List<Currency> currencyRateList = new ArrayList<>();
 
-	public List<Currency> getCurrencyRateList() {
-		return currencyRateList;
+	public static void addToCurrencyRateList(Currency currency) {
+		currencyRateList.add(currency);
 	}
 	
-	public void addToCurrencyRateList(Currency currency) {
-		this.currencyRateList.add(currency);
-	}
-	
-	public void initializeFXratesToListFromFile(String filepath) throws StreamReadException, DatabindException, IOException {
+	public static void initializeFXratesToListFromFile(String filepath) throws StreamReadException, DatabindException, IOException {
 		
 		File fxFile = new File(filepath);
 		ObjectMapper currencyMapper = new ObjectMapper();
@@ -43,8 +33,6 @@ public class FXRatesList {
 			
 			Currency currency = new Currency(currencyCode, rate);
 			addToCurrencyRateList(currency);
-//			fxLogger.debug("added" + currencyCode + " rate: " + rate);
-//			System.out.println("added" + currencyCode + " rate: " + rate);
 		}
 		
 	}

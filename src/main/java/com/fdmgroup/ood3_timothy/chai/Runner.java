@@ -15,11 +15,15 @@ public class Runner {
 	
 	public static void main(String[] args) {
 		String filePath = getFilePath("fx_rates.json");
-		FXRatesList fxRates = new FXRatesList();
+		
 		TransactionsProcessor transactionsProcessor = new TransactionsProcessor();
 		try {
-			fxRates.initializeFXratesToListFromFile(filePath);
-			transactionsProcessor.updateUsersFile();
+			FXRatesList.initializeFXratesToListFromFile(filePath);
+			
+			for ( String transaction : transactionsProcessor.getListOfTransactionsToExecute() ) {
+				transactionsProcessor.executeTransaction(transaction);
+			}
+			
 		} 
 		catch (StreamReadException sre) {
 			System.out.println("stream read exception");

@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 class User {
 	private String name;
-	private TreeMap<Currency, Double> wallet;
+	private TreeMap<String, Double> wallet;
 
 	/**
 	 * Default, no-args constructor for Jackson
@@ -20,7 +20,7 @@ class User {
 	 * @param name   User's name
 	 * @param wallet
 	 */
-	public User(String name, TreeMap<Currency, Double> wallet) {
+	public User(String name, TreeMap<String, Double> wallet) {
 		this.name = name;
 		this.wallet = wallet;
 	}
@@ -29,7 +29,7 @@ class User {
 		return name;
 	}
 
-	public TreeMap<Currency, Double> getWallet() {
+	public TreeMap<String, Double> getWallet() {
 		return wallet;
 	}
 
@@ -37,7 +37,7 @@ class User {
 		this.name = name;
 	}
 
-	public void setWallet(TreeMap<Currency, Double> wallet) {
+	public void setWallet(TreeMap<String, Double> wallet) {
 		this.wallet = wallet;
 	}
 
