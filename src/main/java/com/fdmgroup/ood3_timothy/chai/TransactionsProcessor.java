@@ -33,9 +33,10 @@ class TransactionsProcessor {
 			getListOfTransactionsFromFile();
 			readUsersFile();
 		} catch (FileNotFoundException fe) {
-			System.out.println(fe.getMessage());
+			transactionsLogger.warn(fe.getMessage());
+			
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			transactionsLogger.warn(e.getMessage());
 		}
 	}
 
@@ -59,31 +60,33 @@ class TransactionsProcessor {
 		// 0 - name, 1 - from-curr, 2- to-curr, 3- amount in from-curr
 		
 		if ( !validCurrencies.contains(fromCurrency) || !validCurrencies.contains(toCurrency) ) {
-			System.out.println("Invalid currency: transaction skipped");
+			transactionsLogger.info("Invalid currency: transaction skipped : " + transaction);
+	
 			validTransaction = false;
 		}
 		
 		if ( fromCurrency.equals(toCurrency) ) {
-			System.out.println("FROM-currency equals to TO-currency: transaction skipped");
+			transactionsLogger.info("FROM-currency equals to TO-currency: transaction skipped : " + transaction);
 			validTransaction = false;
 		}
 		
 		for ( User user : userList ) {
 			
 			if ( username.equalsIgnoreCase(user.getName())) {
+				nameMatches = true;
+				targetUser = user;
+				validTransaction = true;
 				if ( !user.getWallet().containsKey(fromCurrency) ) {
-					System.out.println("User does not hold FROM-currency in wallet: transaction skipped");
+					transactionsLogger.info("User does not hold FROM-currency in wallet: transaction skipped : " + transaction);
 					validTransaction = false;
 				} 
 				else {
 					if ( user.getWallet().get(fromCurrency) < amount ) {
-						System.out.println("User has insufficient FROM-currency in wallet: transaction skipped");
+						transactionsLogger.info("User has insufficient FROM-currency in wallet: transaction skipped : " + transaction);
 						validTransaction = false;
 					}
 				}
-				nameMatches = true;
-				targetUser = user;
-				validTransaction = true;
+				
 				break;
 			} 
 		}
@@ -105,10 +108,10 @@ class TransactionsProcessor {
 			}
 			
 			updateUsersFile();
-			System.out.println("Transaction completed: " + transaction);
+			transactionsLogger.trace("Transaction completed: " + transaction);
 		}
 		else if ( !nameMatches ) {
-			System.out.println("User does not exist in users.json: transaction skipped");
+			transactionsLogger.info("User does not exist in users.json: transaction skipped : " + transaction);
 		}
 		
 	}
@@ -158,5 +161,6 @@ class TransactionsProcessor {
 	public List<String> getListOfTransactionsToExecute() {
 		return this.transactionsListToExecute;
 	}
+	
 
 }
