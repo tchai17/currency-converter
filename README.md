@@ -1,4 +1,4 @@
-This repository contains the files needed to run Currency Converter application as a requirement of OOD-3 Assessment.
+This repository contains the files needed to run Currency Converter application.
 
 To run the application, run the Runner.java file.
 
